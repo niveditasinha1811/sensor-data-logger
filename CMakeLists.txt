@@ -17,9 +17,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(unity)
 
-# Enable CTest
-enable_testing()
-
 # Module source lists
 set(SENSOR_LOGGER_SRC
     src/sensor_logger.c
@@ -33,8 +30,8 @@ add_executable(sensor_logger_tests
     ${SENSOR_LOGGER_SRC}
     tests/test_sensor_logger.c
 )
+target_compile_definitions(sensor_logger_tests PRIVATE UNITY_TESTING)
 target_link_libraries(sensor_logger_tests PRIVATE unity)
-add_test(NAME sensor_logger_tests COMMAND sensor_logger_tests)
 
 # Mock Sensor tests
 add_executable(mock_sensor_tests
@@ -42,14 +39,16 @@ add_executable(mock_sensor_tests
     ${MOCK_SENSOR_SRC}
     tests/test_mock_sensor.c
 )
+# target_compile_definitions(mock_sensor_tests PRIVATE UNITY_TESTING) # Uncomment if mock_sensor.c uses UNITY_TESTING guards
 target_link_libraries(mock_sensor_tests PRIVATE unity)
-add_test(NAME mock_sensor_tests COMMAND mock_sensor_tests)
 
 # Helper targets
 add_custom_target(run-tests
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    COMMAND $<TARGET_FILE:sensor_logger_tests>
+    COMMAND $<TARGET_FILE:mock_sensor_tests>
     DEPENDS sensor_logger_tests mock_sensor_tests
-    COMMENT "Run all unit tests"
+    COMMENT "Run all Unity test executables"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 add_custom_target(static-analysis

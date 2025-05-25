@@ -50,7 +50,9 @@ case "$cmd" in
       exit 1
     fi
     cd "$BUILD_DIR"
-    ctest --output-on-failure
+    # Old command: ctest --output-on-failure
+    # New command:
+    cmake --build . --target run-tests
     ;;
 
   lint)
