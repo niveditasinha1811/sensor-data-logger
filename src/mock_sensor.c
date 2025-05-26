@@ -1,47 +1,80 @@
-/* SPDX-License-Identifier: BSD-3-Clause */
 /**
- * @file    mock_sensor.c
- * @brief   Implementation of mock sensor data generator.
+ * @file    src/mock_sensor.c
+ * @brief   Mock sensor data generator implementation.
  *
- * Uses gettimeofday() for epoch-ms timestamp and rand()
- * for uniform random ±16 G on each axis.
+ * @details
+ *   - On first call, seeds the PRNG from the current time (ms resolution)
+ *   - Each call returns a sensor_sample_t with:
+ *       * timestamp_ms: epoch milliseconds
+ *       * acc_x, acc_y, acc_z: uniform random floats in [-16.0, +16.0]
+ *
+ * @author  Nivedita
+ * @date    2025-05-24
  */
 
  #include "mock_sensor/mock_sensor.h"
- #include <stdlib.h>
- #include <sys/time.h>
+ #include <stdlib.h>       /* srand, RAND_MAX */
+ #include <sys/time.h>     /* gettimeofday, struct timeval */
+ #include <stdbool.h>      /* bool */
+ 
+ /** @brief Milliseconds per second */
+ #define MOCK_SENSOR_MS_PER_SEC_U32   (1000UL)
+ 
+ /*— Global flag indicating if RNG has been seeded —*/
+ static bool _bool_seeded_b = false;
  
  /**
-  * @brief Generate and return a mock sensor sample.
+  * @brief  Generate and return one mock accelerometer sample.
+  *
+  * On the first invocation, seeds the RNG with a mix of seconds and microseconds.
+  * Subsequent calls reuse the generator state.
+  *
+  * @return sensor_sample_t  Fully populated sample.
   */
  sensor_sample_t get_mock_sensor_data(void)
  {
-     static int seeded = 0;
-     if (!seeded)
+     struct timeval l_mock_sensor_tv0_st = { 0 };
+     struct timeval l_mock_sensor_tv_st  = { 0 };
+     sensor_sample_t l_sample_st = {
+                                    .timestamp_ms = 0U,
+                                    .acc_x        = 0.0f,
+                                    .acc_y        = 0.0f,
+                                    .acc_z        = 0.0f
+                                    };
+    
+
+     /* 1) Seed RNG once */
+     if (_bool_seeded_b == false)
      {
-         struct timeval tv0;
-         (void)gettimeofday(&tv0, NULL);
-         srand((unsigned int)(tv0.tv_sec ^ tv0.tv_usec));
-         seeded = 1;
+         (void)gettimeofday(&l_mock_sensor_tv0_st, NULL);
+         /* XOR seconds and microseconds for variability */
+         srand((unsigned int)
+               ( (unsigned long)l_mock_sensor_tv0_st.tv_sec ^
+                 (unsigned long)l_mock_sensor_tv0_st.tv_usec ));
+         _bool_seeded_b = true;
      }
  
-     sensor_sample_t sample;
+     /* 2) Timestamp in milliseconds */
+     (void)gettimeofday(&l_mock_sensor_tv_st, NULL);
+     l_sample_st.timestamp_ms =
+         (uint32_t)
+         ( ((uint32_t)l_mock_sensor_tv_st.tv_sec * MOCK_SENSOR_MS_PER_SEC_U32) +
+           ((uint32_t)l_mock_sensor_tv_st.tv_usec / MOCK_SENSOR_MS_PER_SEC_U32) );
  
-     /* Timestamp: epoch ms */
-     struct timeval tv;
-     (void)gettimeofday(&tv, NULL);
-     sample.timestamp_ms = (uint32_t)((tv.tv_sec * 1000UL) + (tv.tv_usec / 1000UL));
- 
-     /* Generate uniform random floats in [-16.0, +16.0] */
-     for (int i = 0; i < 3; ++i)
+     /* 3) Generate uniform random acceleration in [-16.0, +16.0] */
+     for (uint32_t l_axis_index_U32 = 0U;
+          l_axis_index_U32 < 3U;
+          ++l_axis_index_U32)
      {
-         float normalized = (float)rand() / (float)RAND_MAX;  /* [0..1] */
-         float *acc = (i == 0) ? &sample.acc_x
-                       : (i == 1) ? &sample.acc_y
-                                  : &sample.acc_z;
-         *acc = (normalized * 32.0f) - 16.0f;
+         float l_normalized_f = (float)rand() / (float)RAND_MAX;  /* [0.0..1.0] */
+         float *ptr_axis_acc_f = (l_axis_index_U32 == 0U) ? &l_sample_st.acc_x
+                                 : (l_axis_index_U32 == 1U) ? &l_sample_st.acc_y
+                                                           : &l_sample_st.acc_z;
+ 
+         /* Map to [-16.0..+16.0] */
+         *ptr_axis_acc_f = (l_normalized_f * 32.0f) - 16.0f;
      }
  
-     return sample;
+     return l_sample_st;
  }
  

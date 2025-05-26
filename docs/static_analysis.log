@@ -1,16 +1,4 @@
-/Users/niveditasinha/Downloads/sensor_data_logger/src/main.c:3:information:Include file: <stdlib.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/main.c:4:information:Include file: <time.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/main.c:5:information:Include file: "sensor_logger/sensor_logger.h" not found.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/main.c:6:information:Include file: "mock_sensor/mock_sensor.h" not found.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/mock_sensor.c:10:information:Include file: "mock_sensor/mock_sensor.h" not found.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/mock_sensor.c:11:information:Include file: <stdlib.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/mock_sensor.c:12:information:Include file: <sys/time.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:10:information:Include file: "sensor_logger/sensor_logger.h" not found.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:11:information:Include file: <string.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:12:information:Include file: <stdio.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:13:information:Include file: <stdint.h> not found. Please note: Cppcheck does not need standard library headers to get proper results.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:114:style:Variable 's' can be declared as pointer to const
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:132:style:The function 'get_sensor_logger_entry_count' is never used.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:135:style:The function 'get_sensor_logger_head_index' is never used.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:138:style:The function 'get_sensor_logger_buffer_entry' is never used.
+/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:137:style:The function 'get_sensor_logger_entry_count' is never used.
+/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:143:style:The function 'get_sensor_logger_head_index' is never used.
+/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:149:style:The function 'get_sensor_logger_buffer_entry' is never used.
 nofile:0:information:Active checkers: 116/856 (use --checkers-report=<filename> to see details)

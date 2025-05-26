@@ -68,11 +68,11 @@ CMakeFiles/sensor_logger_tests.dir/tests/test_sensor_logger.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h \
   /Users/niveditasinha/Downloads/sensor_data_logger/include/sensor_logger/sensor_logger.h \
+  /Users/niveditasinha/Downloads/sensor_data_logger/include/mock_sensor/mock_sensor.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rsize_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_errno_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_strings.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_strings.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h \
-  /Users/niveditasinha/Downloads/sensor_data_logger/include/mock_sensor/mock_sensor.h
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h

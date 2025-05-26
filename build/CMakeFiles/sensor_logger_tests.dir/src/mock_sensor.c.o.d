@@ -1,7 +1,6 @@
 CMakeFiles/sensor_logger_tests.dir/src/mock_sensor.c.o: \
   /Users/niveditasinha/Downloads/sensor_data_logger/src/mock_sensor.c \
   /Users/niveditasinha/Downloads/sensor_data_logger/include/mock_sensor/mock_sensor.h \
-  /Users/niveditasinha/Downloads/sensor_data_logger/include/sensor_logger/sensor_logger.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_int8_t.h \
@@ -24,6 +23,7 @@ CMakeFiles/sensor_logger_tests.dir/src/mock_sensor.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h \
+  /Users/niveditasinha/Downloads/sensor_data_logger/include/sensor_logger/sensor_logger.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdlib.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \
@@ -91,4 +91,5 @@ CMakeFiles/sensor_logger_tests.dir/src/mock_sensor.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/time.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_time.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_clock_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_select.h
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_select.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdbool.h

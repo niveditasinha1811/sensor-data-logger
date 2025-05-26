@@ -1,144 +1,159 @@
-/* SPDX-License-Identifier: BSD-3-Clause */
 /**
- * @file    sensor_logger.c
+ * @file    src/sensor_logger.c
  * @brief   Implementation of the sensor data logger API.
  *
- * Implements a 128-entry circular buffer of timestamped accelerometer samples,
- * with overwrite-oldest behavior and simple critical-section guards.
+ * @details
+ *   - Maintains a 128‐entry circular buffer of timestamped accelerometer samples.
+ *   - Overwrites the oldest sample when full.
+ *   - Exposes init, log, and print functions.
+ *
+ * @author  Nivedita
+ * @date    2025-05-24
  */
 
  #include "sensor_logger/sensor_logger.h"
- #include <string.h>     /* for memset */
- #include <stdio.h>      /* for printf */
- #include <stdint.h>     /* for uint32_t */
+ #include <string.h>     /* memset */
+ #include <stdio.h>      /* printf, fflush */
+ #include <stdint.h>     /* uint32_t */
  
- /* If not provided by the platform, you can override these */
+ /* If not provided, these can be overridden */
  #ifndef LOG_PRINTF
  #define LOG_PRINTF(...)    (printf(__VA_ARGS__))
  #endif
  #ifndef ENTER_CRITICAL
- #define ENTER_CRITICAL() do { } while (0)
+ #define ENTER_CRITICAL()   do { } while (0)
  #endif
  #ifndef EXIT_CRITICAL
- #define EXIT_CRITICAL()  do { } while (0)
+ #define EXIT_CRITICAL()    do { } while (0)
  #endif
  
- /* Circular buffer storage */
- static sensor_sample_t buffer[SENSOR_LOGGER_BUFFER_SIZE];
- static uint32_t head_index = 0;   /**< Next write position */
- static uint32_t entry_count = 0;  /**< Number of valid entries */
+ /*— Global storage —*/
+ static sensor_sample_t gl_sensor_logger_buffer_U8a[SENSOR_LOGGER_BUFFER_SIZE];
+ static uint32_t        gl_sensor_logger_head_index_U32   = 0U;  /**< Next write position */
+ static uint32_t        gl_sensor_logger_entry_count_U32  = 0U;  /**< Number of valid entries */
  
  /**
-  * @brief Initialize the sensor logger module.
-  *
-  * Clears buffer state; must be called before other API functions.
-  *
-  * @return 0 on success.
+  * @brief   Initialize/reset the sensor logger.
+  * @return  0 on success.
   */
  int init_sensor_logger(void)
  {
      ENTER_CRITICAL();
-     head_index  = 0u;
-     entry_count = 0u;
-     /* zero out buffer for deterministic startup (optional but good practice) */
-     (void)memset(buffer, 0, sizeof(buffer));
+       gl_sensor_logger_head_index_U32  = 0U;
+       gl_sensor_logger_entry_count_U32 = 0U;
+       (void)memset(gl_sensor_logger_buffer_U8a, 0, sizeof(gl_sensor_logger_buffer_U8a));
      EXIT_CRITICAL();
      return 0;
  }
  
  /**
-  * @brief Log a new sample into the circular buffer.
-  *
-  * Overwrites the oldest entry when full.
-  *
-  * @param[in] sample Pointer to the sample to store (must not be NULL).
-  * @return 0 on success; -1 if sample was NULL.
+  * @brief   Log one accelerometer sample.
+  * @param[in] p_sample_ptr  Pointer to sample (must not be NULL).
+  * @return  0 on success; -1 if p_sample_ptr == NULL.
   */
- int log_sensor_data(const sensor_sample_t * sample)
+ int log_sensor_data(const sensor_sample_t * const p_sample_ptr)
  {
-     if (sample == NULL)
+     if (p_sample_ptr == NULL)
      {
          return -1;
      }
  
      ENTER_CRITICAL();
-     /* write at head_index */
-     buffer[head_index] = *sample;
+       /* Write and advance head index */
+       gl_sensor_logger_buffer_U8a[gl_sensor_logger_head_index_U32] = *p_sample_ptr;
+       gl_sensor_logger_head_index_U32 =
+           (gl_sensor_logger_head_index_U32 + 1U) % SENSOR_LOGGER_BUFFER_SIZE;
  
-     /* advance head, wrap if needed */
-     head_index = (head_index + 1u) % SENSOR_LOGGER_BUFFER_SIZE;
- 
-     /* track count up to capacity */
-     if (entry_count < SENSOR_LOGGER_BUFFER_SIZE)
-     {
-         entry_count++;
-     }
+       /* Increase count up to capacity */
+       if (gl_sensor_logger_entry_count_U32 < SENSOR_LOGGER_BUFFER_SIZE)
+       {
+           gl_sensor_logger_entry_count_U32++;
+       }
      EXIT_CRITICAL();
  
      return 0;
  }
  
  /**
-  * @brief Print all logged samples in chronological order.
-  *
-  * Uses CSV format: timestamp_ms,acc_x,acc_y,acc_z\n
-  * Returns total characters printed.
-  *
-  * @return total number of characters printed (sum of LOG_PRINTF returns).
+  * @brief   Print all logged samples in CSV (oldest→newest).
+  * @return  Number of characters printed.
   */
  int print_log(void)
  {
-     uint32_t printed_chars = 0u;
-     uint32_t current_idx; // Renamed to avoid conflict with loop variable 'idx'
-     uint32_t i;
+     uint32_t l_printed_chars_U32    = 0U;
+     uint32_t l_current_index_U32    = 0U;
+     uint32_t l_loop_index_U32       = 0U;
  
      ENTER_CRITICAL();
-     if (entry_count == 0) {
-         EXIT_CRITICAL();
-         return 0;
-     }
+       if (gl_sensor_logger_entry_count_U32 == 0U)
+       {
+           EXIT_CRITICAL();
+           return 0;
+       }
  
-     /* Determine start of oldest entry */
-     if (entry_count < SENSOR_LOGGER_BUFFER_SIZE) {
-         current_idx = 0; // Start from the beginning if buffer is not full
-     } else {
-         // If buffer is full, oldest entry is at current head_index
-         current_idx = head_index;
-     }
+       /* Determine start index */
+       if (gl_sensor_logger_entry_count_U32 < SENSOR_LOGGER_BUFFER_SIZE)
+       {
+           l_current_index_U32 = 0U;
+       }
+       else
+       {
+           l_current_index_U32 = gl_sensor_logger_head_index_U32;
+       }
  
-     /* iterate oldest \u2192 newest */
-     for (i = 0u; i < entry_count; ++i)
-     {
-         // Correctly calculate the index in the circular buffer
-         uint32_t actual_buffer_idx = (current_idx + i) % SENSOR_LOGGER_BUFFER_SIZE;
-         sensor_sample_t *s = &buffer[actual_buffer_idx];
+       /* Iterate over valid entries */
+       for (l_loop_index_U32 = 0U;
+            l_loop_index_U32 < gl_sensor_logger_entry_count_U32;
+            ++l_loop_index_U32)
+       {
+           uint32_t l_actual_buffer_index_U32 =
+               (l_current_index_U32 + l_loop_index_U32) % SENSOR_LOGGER_BUFFER_SIZE;
+           const sensor_sample_t * const ptr_buffer_entry_st =
+               &gl_sensor_logger_buffer_U8a[l_actual_buffer_index_U32];
  
-         int ret = LOG_PRINTF("%lu,%.6f,%.6f,%.6f\n",
-                              (unsigned long)s->timestamp_ms,
-                              s->acc_x, s->acc_y, s->acc_z);
-         if (ret > 0)
-         {
-             printed_chars += (uint32_t)ret;
-         }
-     }
+           int l_ret_i = LOG_PRINTF(
+               "%lu,%.6f,%.6f,%.6f\n",
+               (unsigned long)ptr_buffer_entry_st->timestamp_ms,
+               ptr_buffer_entry_st->acc_x,
+               ptr_buffer_entry_st->acc_y,
+               ptr_buffer_entry_st->acc_z
+           );
+           if (l_ret_i > 0)
+           {
+               l_printed_chars_U32 += (uint32_t)l_ret_i;
+           }
+       }
      EXIT_CRITICAL();
  
-     return (int)printed_chars;
+     /* Ensure any redirected stdout (e.g. fmemopen) is flushed */
+     (void)fflush(stdout);
+ 
+     return (int)l_printed_chars_U32;
  }
  
- // Helper function for tests to inspect buffer state (optional, for white-box testing)
- // This should ideally be in the test file or conditionally compiled for test builds.
  #ifdef UNITY_TESTING
- uint32_t get_sensor_logger_entry_count(void) {
-     return entry_count;
+
+ /* cppcheck-suppress unusedFunction */
+ uint32_t get_sensor_logger_entry_count(void)
+ {
+     return gl_sensor_logger_entry_count_U32;
  }
- uint32_t get_sensor_logger_head_index(void) {
-     return head_index;
+ 
+ /* cppcheck-suppress unusedFunction */
+ uint32_t get_sensor_logger_head_index(void)
+ {
+     return gl_sensor_logger_head_index_U32;
  }
- const sensor_sample_t* get_sensor_logger_buffer_entry(uint32_t index) {
-     if (index < SENSOR_LOGGER_BUFFER_SIZE) {
-         return &buffer[index];
+ 
+ /* cppcheck-suppress unusedFunction */
+ const sensor_sample_t* get_sensor_logger_buffer_entry(uint32_t index)
+ {
+     if (index < SENSOR_LOGGER_BUFFER_SIZE)
+     {
+         return &gl_sensor_logger_buffer_U8a[index];
      }
      return NULL;
  }
- #endif
+ 
+ #endif  /* UNITY_TESTING */
+ 
