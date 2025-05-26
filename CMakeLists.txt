@@ -28,6 +28,7 @@ set(MOCK_SENSOR_SRC
 # Sensor Logger tests
 add_executable(sensor_logger_tests
     ${SENSOR_LOGGER_SRC}
+    ${MOCK_SENSOR_SRC}
     tests/test_sensor_logger.c
 )
 target_compile_definitions(sensor_logger_tests PRIVATE UNITY_TESTING)
@@ -39,8 +40,16 @@ add_executable(mock_sensor_tests
     ${MOCK_SENSOR_SRC}
     tests/test_mock_sensor.c
 )
-# target_compile_definitions(mock_sensor_tests PRIVATE UNITY_TESTING) # Uncomment if mock_sensor.c uses UNITY_TESTING guards
+target_compile_definitions(mock_sensor_tests PRIVATE UNITY_TESTING)
 target_link_libraries(mock_sensor_tests PRIVATE unity)
+
+# Application executable
+add_executable(sensor_logger_app
+    ${SENSOR_LOGGER_SRC}
+    ${MOCK_SENSOR_SRC}
+    src/main.c
+)
+target_link_libraries(sensor_logger_app PRIVATE)
 
 # Helper targets
 add_custom_target(run-tests

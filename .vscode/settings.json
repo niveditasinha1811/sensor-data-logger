@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "sensor_logger.h": "c",
+        "unity.h": "c",
+        "stdio.h": "c"
+    }
+}

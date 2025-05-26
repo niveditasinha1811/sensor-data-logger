@@ -1,0 +1,3 @@
+/Users/niveditasinha/Downloads/sensor_data_logger/build/_deps/unity-subbuild/CMakeFiles/unity-populate.dir
+/Users/niveditasinha/Downloads/sensor_data_logger/build/_deps/unity-subbuild/CMakeFiles/edit_cache.dir
+/Users/niveditasinha/Downloads/sensor_data_logger/build/_deps/unity-subbuild/CMakeFiles/rebuild_cache.dir

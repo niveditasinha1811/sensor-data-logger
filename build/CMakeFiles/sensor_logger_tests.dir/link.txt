@@ -1,0 +1,1 @@
+/usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/sensor_logger_tests.dir/src/sensor_logger.c.o CMakeFiles/sensor_logger_tests.dir/src/mock_sensor.c.o CMakeFiles/sensor_logger_tests.dir/tests/test_sensor_logger.c.o -o sensor_logger_tests  _deps/unity-build/libunity.a

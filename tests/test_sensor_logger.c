@@ -10,6 +10,7 @@
  #include <stdio.h>
  #include <string.h>
  #include <stdint.h> // For UINT32_MAX
+ #include "mock_sensor/mock_sensor.h" // For get_mock_sensor_data
  
  /* Buffer to capture printf output via fmemopen */
  #define OUTPUT_BUFFER_SIZE 8192 // Increased size for more extensive logging tests
@@ -267,6 +268,35 @@
      TEST_ASSERT_EQUAL_STRING_LEN("", output_buffer, 1);
  }
  
+ /**
+ * @brief  Unity test helper to print out the current log buffer.
+ *
+ * This test:
+ *  1) Generates a few mock samples into the logger
+ *  2) Restores stdout so that print_log() writes to your terminal
+ *  3) Calls print_log() to emit CSV lines
+ *  4) Redirects stdout back into the fmemopen buffer so Unity teardown remains happy
+ */
+void test_harness_print_logs(void)
+{
+    // 1) Fill the buffer with a handful of samples
+    for (int i = 0; i < 5; ++i) {
+        sensor_sample_t s = get_mock_sensor_data();
+        TEST_ASSERT_EQUAL_INT(0, log_sensor_data(&s));
+    }
+
+    // 2) Undo the fmemopen redirection so print_log() goes to real stdout
+    restore_stdout_from_buffer();
+
+    // 3) Emit the CSV dump to your console
+    print_log();
+
+    // 4) Re-redirect stdout back into the buffer for Unity’s tearDown()
+    redirect_stdout_to_buffer();
+
+    // 5) Mark test as passed
+    TEST_PASS_MESSAGE("Log dumped to console");
+}
  
  int main(void)
  {
