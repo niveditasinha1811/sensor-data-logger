@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/Users/niveditasinha/Downloads/sensor_data_logger/build/cmake_install.cmake",
-		"/Users/niveditasinha/Downloads/sensor_data_logger/build/_deps/unity-build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

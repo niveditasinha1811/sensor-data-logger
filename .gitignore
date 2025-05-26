@@ -1,27 +1,28 @@
-# Build directory
-/build/
+# macOS metadata
+.DS_Store
 
-# CMake artifacts
+# Editor settings
+.vscode/
+
+# Build artifacts
+/build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# Object files and executables
+# Static-analysis output
+/docs/
+
+# Binaries and object files
 *.o
 sensor_data_logger
+test_mock_sensor
+test_sensor_logger
 
-# Unity test artifacts (if any)
-*.log
-*.xml
+# Runtime logs
+sensor_log.csv
 
-# Static analysis reports
-docs/
-
-# Shell scripts logs
-*.sh~ 
-
-# Editor and OS files
+# Backup and temp files
 *~
-.DS_Store
 *.swp

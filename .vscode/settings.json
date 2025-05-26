@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "sensor_logger.h": "c",
-        "unity.h": "c",
-        "stdio.h": "c",
-        "mock_sensor.h": "c"
-    }
-}

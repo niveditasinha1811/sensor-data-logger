@@ -1,4 +1,0 @@
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:137:style:The function 'get_sensor_logger_entry_count' is never used.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:143:style:The function 'get_sensor_logger_head_index' is never used.
-/Users/niveditasinha/Downloads/sensor_data_logger/src/sensor_logger.c:149:style:The function 'get_sensor_logger_buffer_entry' is never used.
-nofile:0:information:Active checkers: 116/856 (use --checkers-report=<filename> to see details)
