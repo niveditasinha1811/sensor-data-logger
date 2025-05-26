@@ -1,0 +1,27 @@
+# Build directory
+/build/
+
+# CMake artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Object files and executables
+*.o
+sensor_data_logger
+
+# Unity test artifacts (if any)
+*.log
+*.xml
+
+# Static analysis reports
+docs/
+
+# Shell scripts logs
+*.sh~ 
+
+# Editor and OS files
+*~
+.DS_Store
+*.swp
