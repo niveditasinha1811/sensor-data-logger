@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: BSD-3-Clause */
 /**
  * @file    tests/test_sensor_logger.c
  * @brief   Unity unit tests for sensor_logger module.
@@ -132,11 +131,25 @@
      TEST_ASSERT_EQUAL_UINT32(1U, get_sensor_logger_entry_count());
  }
  
- /* Continue refactoring each test in the same style: 
-    - Descriptive l_…_U32 locals, initialized
-    - snprintf instead of sprintf
-    - explicit (void) casts
-    - unified naming */
+ void test_wrap_around_behavior(void)
+ {
+     for (uint32_t i = 0; i < SENSOR_LOGGER_BUFFER_SIZE + 10; ++i)
+     {
+         sensor_sample_t s = {
+             .timestamp_ms = i * 10U,
+             .acc_x = (float)i,
+             .acc_y = (float)i + 1,
+             .acc_z = (float)i + 2
+         };
+         (void)log_sensor_data(&s);
+     }
+ 
+     // Verify that only the last 128 entries are retained
+     TEST_ASSERT_EQUAL_UINT32(SENSOR_LOGGER_BUFFER_SIZE, get_sensor_logger_entry_count());
+ 
+     print_log();
+ }
+ 
  
  int main(void)
  {
@@ -145,7 +158,7 @@
      RUN_TEST(test_log_null_sample);
      RUN_TEST(test_print_empty_after_init);
      RUN_TEST(test_single_sample);
-     /* …other RUN_TEST calls… */
+     RUN_TEST(test_wrap_around_behavior);
      return UNITY_END();
  }
  

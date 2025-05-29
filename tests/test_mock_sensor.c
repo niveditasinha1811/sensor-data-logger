@@ -78,6 +78,9 @@
  
  /**
   * @brief  Test that successive timestamps do not decrease.
+  * First timestamp is valid.
+  * Timestamps don’t decrease.
+  * At least one axis changes (to avoid repeated data).
   */
  void test_get_mock_sensor_data_timestamp_increases(void)
  {
